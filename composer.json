@@ -13,12 +13,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Media24si\\eSlog2_reader\\": "src/"
+            "Media24si\\eSlog2Reader\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Media24si\\eSlog2_reader\\Tests\\": "tests/"
+            "Media24si\\eSlog2Reader\\Tests\\": "tests/"
         }
     },
     "require-dev": {
