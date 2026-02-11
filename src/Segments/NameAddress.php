@@ -1,8 +1,8 @@
 <?php
 
-namespace Media24si\eSlog2_reader\Segments;
+namespace Media24si\eSlog2Reader\Segments;
 
-use Media24si\eSlog2_reader\XMLHelpers;
+use Media24si\eSlog2Reader\XMLHelpers;
 use SimpleXMLElement;
 
 class NameAddress

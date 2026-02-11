@@ -1,9 +1,9 @@
 <?php
 
-namespace Media24si\eSlog2_reader;
+namespace Media24si\eSlog2Reader;
 
-use Media24si\eSlog2_reader\FreeText;
-use Media24si\eSlog2_reader\Segments\DateTimePeriod;
+use Media24si\eSlog2Reader\FreeText;
+use Media24si\eSlog2Reader\Segments\DateTimePeriod;
 
 class ParseInvoiceXML
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Media24si\eSlog2_reader\Segments;
+namespace Media24si\eSlog2Reader\Segments;
 
 class LineItem
 {

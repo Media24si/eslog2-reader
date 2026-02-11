@@ -1,8 +1,8 @@
 <?php
 
-namespace Media24si\eSlog2_reader\Tests;
+namespace Media24si\eSlog2Reader\Tests;
 
-use Media24si\eSlog2_reader\ParseInvoiceXML;
+use Media24si\eSlog2Reader\ParseInvoiceXML;
 use PHPUnit\Framework\TestCase;
 
 class ParseInvoiceXMLTest extends TestCase

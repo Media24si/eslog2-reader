@@ -19,7 +19,7 @@ composer require media24si/eslog2_reader
 ## Usage
 
 ```php
-use Media24si\eSlog2_reader\ParseInvoiceXML;
+use Media24si\eSlog2Reader\ParseInvoiceXML;
 
 // Parse an eSlog 2.0 invoice XML file
 $parser = new ParseInvoiceXML();

@@ -1,23 +1,23 @@
 <?php
 
-namespace Media24si\eSlog2_reader;
+namespace Media24si\eSlog2Reader;
 
-use Media24si\eSlog2_reader\Segments\AdditionalProductID;
-use Media24si\eSlog2_reader\Segments\Allowance;
-use Media24si\eSlog2_reader\Segments\Contact;
-use Media24si\eSlog2_reader\Segments\DateTimePeriod;
-use Media24si\eSlog2_reader\Segments\FinancialInfo;
-use Media24si\eSlog2_reader\Segments\NameAddress;
-use Media24si\eSlog2_reader\Segments\PercentageDetails;
-use Media24si\eSlog2_reader\Segments\ReferenceDocument;
-use Media24si\eSlog2_reader\Segments\Currency;
-use Media24si\eSlog2_reader\Segments\ItemDescription;
-use Media24si\eSlog2_reader\Segments\LineItem;
-use Media24si\eSlog2_reader\Segments\MonetaryAmount;
-use Media24si\eSlog2_reader\Segments\PriceDetails;
-use Media24si\eSlog2_reader\Segments\ProductOriginCountry;
-use Media24si\eSlog2_reader\Segments\Quantity;
-use Media24si\eSlog2_reader\Segments\Tax;
+use Media24si\eSlog2Reader\Segments\AdditionalProductID;
+use Media24si\eSlog2Reader\Segments\Allowance;
+use Media24si\eSlog2Reader\Segments\Contact;
+use Media24si\eSlog2Reader\Segments\DateTimePeriod;
+use Media24si\eSlog2Reader\Segments\FinancialInfo;
+use Media24si\eSlog2Reader\Segments\NameAddress;
+use Media24si\eSlog2Reader\Segments\PercentageDetails;
+use Media24si\eSlog2Reader\Segments\ReferenceDocument;
+use Media24si\eSlog2Reader\Segments\Currency;
+use Media24si\eSlog2Reader\Segments\ItemDescription;
+use Media24si\eSlog2Reader\Segments\LineItem;
+use Media24si\eSlog2Reader\Segments\MonetaryAmount;
+use Media24si\eSlog2Reader\Segments\PriceDetails;
+use Media24si\eSlog2Reader\Segments\ProductOriginCountry;
+use Media24si\eSlog2Reader\Segments\Quantity;
+use Media24si\eSlog2Reader\Segments\Tax;
 
 class ParseSegmentType
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Media24si\eSlog2_reader;
+namespace Media24si\eSlog2Reader;
 
 class FreeText
 {
