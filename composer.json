@@ -1,0 +1,36 @@
+{
+    "name": "media24si/eslog2_reader",
+    "description": "Read and parse eSlog 2.0 XML invoice files",
+    "version": "1.0.0",
+    "keywords": [
+        "eSlog2.0"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.1",
+        "ext-simplexml": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Media24si\\eSlog2_reader\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Media24si\\eSlog2_reader\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "authors": [
+        {
+            "name": "Mark Hafner",
+            "email": "mark.hafner@salomon.si"
+        }
+    ]
+}
