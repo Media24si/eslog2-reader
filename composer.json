@@ -1,7 +1,6 @@
 {
     "name": "media24si/eslog2-reader",
     "description": "Read and parse eSlog 2.0 XML invoice files",
-    "version": "1.0.0",
     "keywords": [
         "eSlog2.0"
     ],
