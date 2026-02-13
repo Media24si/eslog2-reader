@@ -112,7 +112,27 @@ class ParseInvoiceXML
             'payment_model' => substr($xml['payment_reference'], 2, 2) ?? null, //Model reference
             'payment_reference_number' => substr($xml['payment_reference'], 4) ?? null, //Sklic prejemnika
             'reference_currency' => $xml['reference_currency'] ?? null, //Valuta
-            'vat_registration_number' => substr($xml['seller_references']['vat_registration_number'], 2) ?? null //Davčna številka.
+            'vat_registration_number' => substr($xml['seller_references']['vat_registration_number'], 2) ?? null, //Davčna številka.
+            //
+            // TODO add an option for the seller, buyer and items in data?
+            // 'seller_name' => $xml['seller']['name'] ?? null, //Izdajatelj, ime podjetja
+            // 'seller_address_1' => $xml['seller']['address_lines'][0] ?? null, //Naslov 1
+            // 'seller_address_2' => $xml['seller']['address_lines'][1] ?? null, //Naslov 2
+            // 'seller_address_3' => $xml['seller']['address_lines'][2] ?? null, //Naslov 3
+            // 'seller_address_postal_code' => $xml['seller']['postal_code'] ?? null, //Poštna številka
+            // 'seller_address_city' => $xml['seller']['city'] ?? null, //Mesto
+            // phone ??? seller_information_contact.communications ???
+            // email ??? seller_information_contact.communications ???
+            //
+            // 'buyer_name' => $xml['buyer']['name'] ?? null, //Prejemnik, ime podjetja
+            // 'buyer_address_1' => $xml['buyer']['address_lines'][0] ?? null, //Naslov 1
+            // 'buyer_address_2' => $xml['buyer']['address_lines'][1] ?? null, //Naslov 2
+            // 'buyer_address_3' => $xml['buyer']['address_lines'][2] ?? null, //Naslov 3
+            // 'buyer_address_postal_code' => $xml['buyer']['postal_code'] ?? null, //Poštna številka
+            // 'buyer_address_city' => $xml['buyer']['city'] ?? null, //Mesto
+            // 'buyer_address_country' => $xml['buyer']['country'] ?? null, //Država
+            //
+            // 'items' TODO
         ];
     }
 
