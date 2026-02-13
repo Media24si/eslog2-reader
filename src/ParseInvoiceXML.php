@@ -59,7 +59,33 @@ class ParseInvoiceXML
             throw new \RuntimeException("Invalid eSLOG invoice: M_INVOIC element not found");
         }
 
-        $invoice = $xmlFile->M_INVOIC;
+        $invoiceData = $this->invoiceDataFromXml($xmlFile);
+        return $invoiceData;
+    }
+
+    private function readXMLAttached($content)
+    {
+        libxml_use_internal_errors(true);
+        $xmlContent = simplexml_load_string($content);
+
+        if ($xmlContent === false) {
+            $errors = libxml_get_errors();
+            libxml_clear_errors();
+            $errorMsg = $errors ? $errors[0]->message : 'Unknown XML parsing error';
+            throw new \RuntimeException("Failed to parse XML file: " . trim($errorMsg));
+        }
+
+        if (!isset($xmlContent->M_INVOIC)) {
+            throw new \RuntimeException("Invalid eSLOG invoice: M_INVOIC element not found");
+        }
+
+        $invoiceData = $this->invoiceDataFromXml($xmlContent);
+        return $invoiceData;
+    }
+
+    private function invoiceDataFromXml($xml): array
+    {
+        $invoice = $xml->M_INVOIC;
         $headers = $this->parseHeaders($invoice);
         $documentTypeAndId = $this->parseDocumentTypeAndId($invoice);
         $documentDateTimePeriod = $this->parseDocumentDateTimePeriod($invoice);
@@ -70,16 +96,8 @@ class ParseInvoiceXML
         return $invoiceData;
     }
 
-    public function getAllData($file)
+    private function extractSpecificData($xml): array
     {
-        $data = $this->readXML($file);
-        if ($data !== null) {
-            return $data;
-        }
-    }
-    public function getSpecificData($file) //Get specific data
-    {
-        $xml = $this->readXML($file);
         return [
             'document_type' => $xml['document_type'] ?? null, //tip dokumenta
             'document_number' => $xml['document_identifier'] ?? null, //št. dokumenta
@@ -93,10 +111,42 @@ class ParseInvoiceXML
             'payment_type' => substr($xml['payment_reference'], 0, 2) ?? null, //Tip reference
             'payment_model' => substr($xml['payment_reference'], 2, 2) ?? null, //Model reference
             'payment_reference_number' => substr($xml['payment_reference'], 4) ?? null, //Sklic prejemnika
-            'reference_currency' => $xml['reference_currency'] ?? null, //Valuta 
+            'reference_currency' => $xml['reference_currency'] ?? null, //Valuta
             'vat_registration_number' => substr($xml['seller_references']['vat_registration_number'], 2) ?? null //Davčna številka.
         ];
     }
+
+    //
+
+    public function getAllData($file)
+    {
+        $data = $this->readXML($file);
+        if ($data !== null) {
+            return $data;
+        }
+    }
+
+    public function getSpecificData($file) //Get specific data
+    {
+        $xml = $this->readXML($file);
+        return $this->extractSpecificData($xml);
+    }
+
+    public function getAllDataAttached($content)
+    {
+        $data = $this->readXMLAttached($content);
+        if ($data !== null) {
+            return $data;
+        }
+    }
+
+    public function getSpecificDataAttached($content) //Get specific data
+    {
+        $xml = $this->readXMLAttached($content);
+        return $this->extractSpecificData($xml);
+    }
+
+    //
 
     private function parseHeaders($invoice): array
     {
@@ -113,6 +163,7 @@ class ParseInvoiceXML
             "controlling_agency" => (string) $documentIdentifiers->D_0051,
         ];
     }
+
     private function parseDocumentTypeAndId($invoice): array
     {
         if (!isset($invoice->S_BGM) || !isset($invoice->S_BGM->C_C002) || !isset($invoice->S_BGM->C_C106)) {
@@ -124,6 +175,7 @@ class ParseInvoiceXML
             'document_identifier' => (string) $bgm->C_C106->D_1004
         ];
     }
+
     private function parseDocumentDateTimePeriod($invoice): array
     {
         $dateTimePeriods = [];
@@ -133,6 +185,7 @@ class ParseInvoiceXML
 
         return $dateTimePeriods;
     }
+
     private function parseDocumentFreeText($invoice): array
     {
         $freeText = $invoice->S_FTX;
@@ -165,6 +218,7 @@ class ParseInvoiceXML
         }
         return $freeTextInfo;
     }
+
     private function parseDocumentSegments($invoice)
     {
         $segments = [];
