@@ -124,9 +124,8 @@ class ParseInvoiceXML
                 'seller_address_3' => $xml['seller']['address_lines'][2] ?? null, //Naslov 3
                 'seller_address_postal_code' => $xml['seller']['postal_code'] ?? null, //Poštna številka
                 'seller_address_city' => $xml['seller']['city'] ?? null, //Mesto
-                // phone ??? seller_information_contact.communications ???
-                // 'seller_phone' => $xml['seller_information_contact']['communications']['WHAT???] ?? null, //Telefon
-                // email ??? seller_information_contact.communications ???
+                'seller_phone' => $xml['seller_information_contact']['communications']['telephone'] ?? null, //Telefon
+                'seller_email' => $xml['seller_information_contact']['communications']['email'] ?? null, //Email
                 'seller_address_country' => $xml['seller']['country'] ?? null, //Država
             ]);
         }
@@ -140,6 +139,8 @@ class ParseInvoiceXML
                 'buyer_address_3' => $xml['buyer']['address_lines'][2] ?? null, //Naslov 3
                 'buyer_address_postal_code' => $xml['buyer']['postal_code'] ?? null, //Poštna številka
                 'buyer_address_city' => $xml['buyer']['city'] ?? null, //Mesto
+                'buyer_phone' => $xml['buyer_information_contact']['communications']['telephone'] ?? null, //Telefon
+                'buyer_email' => $xml['buyer_information_contact']['communications']['email'] ?? null, //Email
                 'buyer_address_country' => $xml['buyer']['country'] ?? null, //Država
             ]);
         }
