@@ -146,6 +146,21 @@ class ParseInvoiceXML
         }
 
         // 'items' TODO
+        if (isset($requestedData['items']) && $requestedData['items'] === true) {
+      
+            // WIP
+            foreach ($xml['line_items'] as $item) {
+            
+                $data['items'][] = [
+                    'name' => $item['item_name'] ?? null,
+                    'description' => $item['item_description'] ?? null,
+                    'quantity' => $item['quantity'] ?? null,
+                    'price_no_discount' => $item['net_calculation_price']['price_amount'] ?? null,
+                    // 'discount' => $item['discount'] ?? null,
+                    'taxable_amount' => $item['taxable_amount'] ?? null,
+                ];
+            }
+        }
 
         return $data;
     }
