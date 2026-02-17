@@ -113,6 +113,9 @@ class ParseInvoiceXML
             'payment_reference_number' => substr($xml['payment_reference'], 4) ?? null, //Sklic prejemnika
             'reference_currency' => $xml['reference_currency'] ?? null, //Valuta
             'vat_registration_number' => substr($xml['seller_references']['vat_registration_number'], 2) ?? null, //Davčna številka.
+            'discount_sum' => $xml['document_level_allowances'] ?? null, //Skupni popust
+            'tax_amount' => $xml['total_vat_amount'] ?? null, //DDV
+            'amount_due_for_payment' => $xml['amount_due_for_payment'] ?? null, //Znesek za plačilo
         ];
 
         if (isset($requestedData['seller']) && $requestedData['seller'] === true) {
@@ -145,18 +148,14 @@ class ParseInvoiceXML
             ]);
         }
 
-        // 'items' TODO
         if (isset($requestedData['items']) && $requestedData['items'] === true) {
-      
-            // WIP
             foreach ($xml['line_items'] as $item) {
-            
                 $data['items'][] = [
                     'name' => $item['item_name'] ?? null,
                     'description' => $item['item_description'] ?? null,
                     'quantity' => $item['quantity'] ?? null,
                     'price_no_discount' => $item['net_calculation_price']['price_amount'] ?? null,
-                    // 'discount' => $item['discount'] ?? null,
+                    'discount' => $item['allowance'][0]['allowance_percentage'] ?? null, // we just take the 1st allowance, unlikely there will be more in an xml without a pdf
                     'taxable_amount' => $item['taxable_amount'] ?? null,
                 ];
             }
