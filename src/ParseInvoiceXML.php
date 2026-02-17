@@ -59,7 +59,33 @@ class ParseInvoiceXML
             throw new \RuntimeException("Invalid eSLOG invoice: M_INVOIC element not found");
         }
 
-        $invoice = $xmlFile->M_INVOIC;
+        $invoiceData = $this->invoiceDataFromXml($xmlFile);
+        return $invoiceData;
+    }
+
+    private function readXMLAttached($content)
+    {
+        libxml_use_internal_errors(true);
+        $xmlContent = simplexml_load_string($content);
+
+        if ($xmlContent === false) {
+            $errors = libxml_get_errors();
+            libxml_clear_errors();
+            $errorMsg = $errors ? $errors[0]->message : 'Unknown XML parsing error';
+            throw new \RuntimeException("Failed to parse XML file: " . trim($errorMsg));
+        }
+
+        if (!isset($xmlContent->M_INVOIC)) {
+            throw new \RuntimeException("Invalid eSLOG invoice: M_INVOIC element not found");
+        }
+
+        $invoiceData = $this->invoiceDataFromXml($xmlContent);
+        return $invoiceData;
+    }
+
+    private function invoiceDataFromXml($xml): array
+    {
+        $invoice = $xml->M_INVOIC;
         $headers = $this->parseHeaders($invoice);
         $documentTypeAndId = $this->parseDocumentTypeAndId($invoice);
         $documentDateTimePeriod = $this->parseDocumentDateTimePeriod($invoice);
@@ -70,17 +96,9 @@ class ParseInvoiceXML
         return $invoiceData;
     }
 
-    public function getAllData($file)
+    private function extractSpecificData($xml, $requestedData): array
     {
-        $data = $this->readXML($file);
-        if ($data !== null) {
-            return $data;
-        }
-    }
-    public function getSpecificData($file) //Get specific data
-    {
-        $xml = $this->readXML($file);
-        return [
+        $data = [
             'document_type' => $xml['document_type'] ?? null, //tip dokumenta
             'document_number' => $xml['document_identifier'] ?? null, //št. dokumenta
             'document_date' => $xml['document_date'] ?? null, //datum dokumenta
@@ -93,10 +111,90 @@ class ParseInvoiceXML
             'payment_type' => substr($xml['payment_reference'], 0, 2) ?? null, //Tip reference
             'payment_model' => substr($xml['payment_reference'], 2, 2) ?? null, //Model reference
             'payment_reference_number' => substr($xml['payment_reference'], 4) ?? null, //Sklic prejemnika
-            'reference_currency' => $xml['reference_currency'] ?? null, //Valuta 
-            'vat_registration_number' => substr($xml['seller_references']['vat_registration_number'], 2) ?? null //Davčna številka.
+            'reference_currency' => $xml['reference_currency'] ?? null, //Valuta
+            'vat_registration_number' => substr($xml['seller_references']['vat_registration_number'], 2) ?? null, //Davčna številka.
+            'discount_sum' => $xml['document_level_allowances'] ?? null, //Skupni popust
+            'tax_amount' => $xml['total_vat_amount'] ?? null, //DDV
+            'amount_due_for_payment' => $xml['amount_due_for_payment'] ?? null, //Znesek za plačilo
         ];
+
+        if (isset($requestedData['seller']) && $requestedData['seller'] === true) {
+            $data = array_merge($data,
+            [
+                'seller_name' => $xml['seller']['name'] ?? null, //Izdajatelj, ime podjetja
+                'seller_address_1' => $xml['seller']['address_lines'][0] ?? null, //Naslov 1
+                'seller_address_2' => $xml['seller']['address_lines'][1] ?? null, //Naslov 2
+                'seller_address_3' => $xml['seller']['address_lines'][2] ?? null, //Naslov 3
+                'seller_address_postal_code' => $xml['seller']['postal_code'] ?? null, //Poštna številka
+                'seller_address_city' => $xml['seller']['city'] ?? null, //Mesto
+                'seller_phone' => $xml['seller_information_contact']['communications']['telephone'] ?? null, //Telefon
+                'seller_email' => $xml['seller_information_contact']['communications']['email'] ?? null, //Email
+                'seller_address_country' => $xml['seller']['country'] ?? null, //Država
+            ]);
+        }
+
+        if (isset($requestedData['buyer']) && $requestedData['buyer'] === true) {
+            $data = array_merge($data,
+            [
+                'buyer_name' => $xml['buyer']['name'] ?? null, //Prejemnik, ime podjetja
+                'buyer_address_1' => $xml['buyer']['address_lines'][0] ?? null, //Naslov 1
+                'buyer_address_2' => $xml['buyer']['address_lines'][1] ?? null, //Naslov 2
+                'buyer_address_3' => $xml['buyer']['address_lines'][2] ?? null, //Naslov 3
+                'buyer_address_postal_code' => $xml['buyer']['postal_code'] ?? null, //Poštna številka
+                'buyer_address_city' => $xml['buyer']['city'] ?? null, //Mesto
+                'buyer_phone' => $xml['buyer_information_contact']['communications']['telephone'] ?? null, //Telefon
+                'buyer_email' => $xml['buyer_information_contact']['communications']['email'] ?? null, //Email
+                'buyer_address_country' => $xml['buyer']['country'] ?? null, //Država
+            ]);
+        }
+
+        if (isset($requestedData['items']) && $requestedData['items'] === true) {
+            foreach ($xml['line_items'] as $item) {
+                $data['items'][] = [
+                    'name' => $item['item_name'] ?? null,
+                    'description' => $item['item_description'] ?? null,
+                    'quantity' => $item['quantity'] ?? null,
+                    'price_no_discount' => $item['net_calculation_price']['price_amount'] ?? null,
+                    'discount' => $item['allowance'][0]['allowance_percentage'] ?? null, // we just take the 1st allowance, unlikely there will be more in an xml without a pdf
+                    'taxable_amount' => $item['taxable_amount'] ?? null,
+                ];
+            }
+        }
+
+        return $data;
     }
+
+    //
+
+    public function getAllData($file)
+    {
+        $data = $this->readXML($file);
+        if ($data !== null) {
+            return $data;
+        }
+    }
+
+    public function getSpecificData($file, $requestedData = []) //Get specific data
+    {
+        $xml = $this->readXML($file);
+        return $this->extractSpecificData($xml, $requestedData);
+    }
+
+    public function getAllDataAttached($content)
+    {
+        $data = $this->readXMLAttached($content);
+        if ($data !== null) {
+            return $data;
+        }
+    }
+
+    public function getSpecificDataAttached($content, $requestedData = []) //Get specific data
+    {
+        $xml = $this->readXMLAttached($content);
+        return $this->extractSpecificData($xml, $requestedData);
+    }
+
+    //
 
     private function parseHeaders($invoice): array
     {
@@ -113,6 +211,7 @@ class ParseInvoiceXML
             "controlling_agency" => (string) $documentIdentifiers->D_0051,
         ];
     }
+
     private function parseDocumentTypeAndId($invoice): array
     {
         if (!isset($invoice->S_BGM) || !isset($invoice->S_BGM->C_C002) || !isset($invoice->S_BGM->C_C106)) {
@@ -124,6 +223,7 @@ class ParseInvoiceXML
             'document_identifier' => (string) $bgm->C_C106->D_1004
         ];
     }
+
     private function parseDocumentDateTimePeriod($invoice): array
     {
         $dateTimePeriods = [];
@@ -133,6 +233,7 @@ class ParseInvoiceXML
 
         return $dateTimePeriods;
     }
+
     private function parseDocumentFreeText($invoice): array
     {
         $freeText = $invoice->S_FTX;
@@ -165,6 +266,7 @@ class ParseInvoiceXML
         }
         return $freeTextInfo;
     }
+
     private function parseDocumentSegments($invoice)
     {
         $segments = [];
