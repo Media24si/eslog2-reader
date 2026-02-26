@@ -108,44 +108,48 @@ class ParseInvoiceXML
             'total_amount_without_vat' => $xml['total_amount_without_vat'] ?? null, //NETO brez DDV,
             'total_amount_with_vat' => $xml['total_amount_with_vat'] ?? null, //Saldo
             'buyer_name' => $xml['buyer']['name'] ?? null, //Prejemnik, ime podjetja
-            'payment_type' => substr($xml['payment_reference'], 0, 2) ?? null, //Tip reference
-            'payment_model' => substr($xml['payment_reference'], 2, 2) ?? null, //Model reference
-            'payment_reference_number' => substr($xml['payment_reference'], 4) ?? null, //Sklic prejemnika
+            'payment_type' => isset($xml['payment_reference']) ? substr($xml['payment_reference'], 0, 2) : null, //Tip reference
+            'payment_model' => isset($xml['payment_reference']) ? substr($xml['payment_reference'], 2, 2) : null, //Model reference
+            'payment_reference_number' => isset($xml['payment_reference']) ? substr($xml['payment_reference'], 4) : null, //Sklic prejemnika
             'reference_currency' => $xml['reference_currency'] ?? null, //Valuta
-            'vat_registration_number' => substr($xml['seller_references']['vat_registration_number'], 2) ?? null, //Davčna številka.
+            'vat_registration_number' => isset($xml['seller_references']['vat_registration_number']) ? substr($xml['seller_references']['vat_registration_number'], 2) : null, //Davčna številka.
             'discount_sum' => $xml['document_level_allowances'] ?? null, //Skupni popust
             'tax_amount' => $xml['total_vat_amount'] ?? null, //DDV
             'amount_due_for_payment' => $xml['amount_due_for_payment'] ?? null, //Znesek za plačilo
         ];
 
         if (isset($requestedData['seller']) && $requestedData['seller'] === true) {
-            $data = array_merge($data,
-            [
-                'seller_name' => $xml['seller']['name'] ?? null, //Izdajatelj, ime podjetja
-                'seller_address_1' => $xml['seller']['address_lines'][0] ?? null, //Naslov 1
-                'seller_address_2' => $xml['seller']['address_lines'][1] ?? null, //Naslov 2
-                'seller_address_3' => $xml['seller']['address_lines'][2] ?? null, //Naslov 3
-                'seller_address_postal_code' => $xml['seller']['postal_code'] ?? null, //Poštna številka
-                'seller_address_city' => $xml['seller']['city'] ?? null, //Mesto
-                'seller_phone' => $xml['seller_information_contact']['communications']['telephone'] ?? null, //Telefon
-                'seller_email' => $xml['seller_information_contact']['communications']['email'] ?? null, //Email
-                'seller_address_country' => $xml['seller']['country'] ?? null, //Država
-            ]);
+            $data = array_merge(
+                $data,
+                [
+                    'seller_name' => $xml['seller']['name'] ?? null, //Izdajatelj, ime podjetja
+                    'seller_address_1' => $xml['seller']['address_lines'][0] ?? null, //Naslov 1
+                    'seller_address_2' => $xml['seller']['address_lines'][1] ?? null, //Naslov 2
+                    'seller_address_3' => $xml['seller']['address_lines'][2] ?? null, //Naslov 3
+                    'seller_address_postal_code' => $xml['seller']['postal_code'] ?? null, //Poštna številka
+                    'seller_address_city' => $xml['seller']['city'] ?? null, //Mesto
+                    'seller_phone' => $xml['seller_information_contact']['communications']['telephone'] ?? null, //Telefon
+                    'seller_email' => $xml['seller_information_contact']['communications']['email'] ?? null, //Email
+                    'seller_address_country' => $xml['seller']['country'] ?? null, //Država
+                ]
+            );
         }
 
         if (isset($requestedData['buyer']) && $requestedData['buyer'] === true) {
-            $data = array_merge($data,
-            [
-                'buyer_name' => $xml['buyer']['name'] ?? null, //Prejemnik, ime podjetja
-                'buyer_address_1' => $xml['buyer']['address_lines'][0] ?? null, //Naslov 1
-                'buyer_address_2' => $xml['buyer']['address_lines'][1] ?? null, //Naslov 2
-                'buyer_address_3' => $xml['buyer']['address_lines'][2] ?? null, //Naslov 3
-                'buyer_address_postal_code' => $xml['buyer']['postal_code'] ?? null, //Poštna številka
-                'buyer_address_city' => $xml['buyer']['city'] ?? null, //Mesto
-                'buyer_phone' => $xml['buyer_information_contact']['communications']['telephone'] ?? null, //Telefon
-                'buyer_email' => $xml['buyer_information_contact']['communications']['email'] ?? null, //Email
-                'buyer_address_country' => $xml['buyer']['country'] ?? null, //Država
-            ]);
+            $data = array_merge(
+                $data,
+                [
+                    'buyer_name' => $xml['buyer']['name'] ?? null, //Prejemnik, ime podjetja
+                    'buyer_address_1' => $xml['buyer']['address_lines'][0] ?? null, //Naslov 1
+                    'buyer_address_2' => $xml['buyer']['address_lines'][1] ?? null, //Naslov 2
+                    'buyer_address_3' => $xml['buyer']['address_lines'][2] ?? null, //Naslov 3
+                    'buyer_address_postal_code' => $xml['buyer']['postal_code'] ?? null, //Poštna številka
+                    'buyer_address_city' => $xml['buyer']['city'] ?? null, //Mesto
+                    'buyer_phone' => $xml['buyer_information_contact']['communications']['telephone'] ?? null, //Telefon
+                    'buyer_email' => $xml['buyer_information_contact']['communications']['email'] ?? null, //Email
+                    'buyer_address_country' => $xml['buyer']['country'] ?? null, //Država
+                ]
+            );
         }
 
         if (isset($requestedData['items']) && $requestedData['items'] === true) {
