@@ -202,7 +202,17 @@ class ParseSegmentType
                     } elseif ($segmentType === self::SEG_FREETEXT && isset($data['additional_product_attribute_information'])) {
                         $lineAdditionalTxt[] = $data['additional_product_attribute_information'];
                     }
-                    $lineItemData = array_merge($lineItemData, $data, $lineAdditionalTxt);
+                    if ($segmentType === self::SEG_ADDITIONAL_PRODUCT_ID) {
+                        foreach ($data as $key => $value) {
+                            if (isset($lineItemData[$key]) && is_array($lineItemData[$key]) && is_array($value)) {
+                                $lineItemData[$key] = array_merge($lineItemData[$key], $value);
+                            } else {
+                                $lineItemData[$key] = $value;
+                            }
+                        }
+                    } else {
+                        $lineItemData = array_merge($lineItemData, $data, $lineAdditionalTxt);
+                    }
                 }
             }
         }
