@@ -177,39 +177,23 @@ class ParseInvoiceXML
 
     public function getAllData($file)
     {
-        try {
-            return $this->readXML($file);
-        } catch (Exception $e) {
-            return null;
-        }
+        return $this->readXML($file);
     }
 
     public function getSpecificData($file, $requestedData = []) //Get specific data
     {
-        try {
-            $xml = $this->readXML($file);
-        } catch (Exception $e) {
-            return null;
-        }
+        $xml = $this->readXML($file);
         return $this->extractSpecificData($xml, $requestedData);
     }
 
     public function getAllDataAttached($content)
     {
-        try {
-            return $this->readXMLAttached($content);
-        } catch (Exception $e) {
-            return null;
-        }
+        return $this->readXMLAttached($content);
     }
 
     public function getSpecificDataAttached($content, $requestedData = []) //Get specific data
     {
-        try {
-            $xml = $this->readXMLAttached($content);
-        } catch (Exception $e) {
-            return null;
-        }
+        $xml = $this->readXMLAttached($content);
         return $this->extractSpecificData($xml, $requestedData);
     }
 
