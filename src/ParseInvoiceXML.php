@@ -2,6 +2,7 @@
 
 namespace Media24si\eSlog2Reader;
 
+use Exception;
 use Media24si\eSlog2Reader\FreeText;
 use Media24si\eSlog2Reader\Segments\DateTimePeriod;
 
@@ -59,7 +60,11 @@ class ParseInvoiceXML
             throw new \RuntimeException("Invalid eSLOG invoice: M_INVOIC element not found");
         }
 
-        $invoiceData = $this->invoiceDataFromXml($xmlFile);
+        try {
+            $invoiceData = $this->invoiceDataFromXml($xmlFile);
+        } catch (Exception $e) {
+            throw new Exception("Error while reading XML file: " . $e->getMessage(), 0, $e);
+        }
         return $invoiceData;
     }
 
@@ -172,29 +177,39 @@ class ParseInvoiceXML
 
     public function getAllData($file)
     {
-        $data = $this->readXML($file);
-        if ($data !== null) {
-            return $data;
+        try {
+            return $this->readXML($file);
+        } catch (Exception $e) {
+            return null;
         }
     }
 
     public function getSpecificData($file, $requestedData = []) //Get specific data
     {
-        $xml = $this->readXML($file);
+        try {
+            $xml = $this->readXML($file);
+        } catch (Exception $e) {
+            return null;
+        }
         return $this->extractSpecificData($xml, $requestedData);
     }
 
     public function getAllDataAttached($content)
     {
-        $data = $this->readXMLAttached($content);
-        if ($data !== null) {
-            return $data;
+        try {
+            return $this->readXMLAttached($content);
+        } catch (Exception $e) {
+            return null;
         }
     }
 
     public function getSpecificDataAttached($content, $requestedData = []) //Get specific data
     {
-        $xml = $this->readXMLAttached($content);
+        try {
+            $xml = $this->readXMLAttached($content);
+        } catch (Exception $e) {
+            return null;
+        }
         return $this->extractSpecificData($xml, $requestedData);
     }
 

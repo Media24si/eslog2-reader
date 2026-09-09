@@ -8,6 +8,9 @@ class Tax
 {
     public const TAX_TYPE_VAT = "VAT";
     public const TAX_TYPE_OTHER = "OTH";
+    public const TAX_TYPE_EXCISE = "EXC";
+    public const TAX_TYPE_ENV = "ENV";
+
     public const CATEGORY_STANDARD_RATE = "S";
     public const CATEGORY_ZERO_RATED_GOODS = "Z";
     public const CATEGORY_EXEMPT_FROM_TAX = "E";
@@ -22,7 +25,9 @@ class Tax
     {
         $taxType = match ((string) $tax->C_C241->D_5153) {
             self::TAX_TYPE_VAT => "value_added_tax",
-            self::TAX_TYPE_OTHER => "other_tax"
+            self::TAX_TYPE_OTHER => "other_tax",
+            self::TAX_TYPE_EXCISE => "excise_tax",
+            self::TAX_TYPE_ENV => "environmental_tax"
         };
         $taxCategory = match ((string) $tax->D_5305) {
             self::CATEGORY_STANDARD_RATE => "standard_rate",
