@@ -170,6 +170,15 @@ class ParseInvoiceXML
             }
         }
 
+        if (isset($requestedData['text']) && $requestedData['text'] === true) {
+            $data['payment_terms'] = $xml['payment_terms_text'] ?? null;
+            $data['seller_legal_info'] = $xml['seller_legal_info'] ?? null;
+            $data['vat_exemption_reason'] = $xml['vat_exemption_reason'] ?? null;
+            $data['invoice_note'] = $xml['invoice_note'] ?? null;
+            $data['remittance_unstructured'] = $xml['remittance_unstructured'] ?? null;
+            $data['text'][] = $xml['payment_terms_text'] . " " . $xml['seller_legal_info'];
+        }
+
         return $data;
     }
 
